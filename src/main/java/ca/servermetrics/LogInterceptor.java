@@ -1,4 +1,4 @@
-package main.java.com.example;
+package main.java.ca.servermetrics;
 
 import java.io.IOException;
 import java.net.URI;

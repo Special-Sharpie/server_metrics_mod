@@ -1,4 +1,4 @@
-package main.java.com.example;
+package main.java.ca.servermetrics;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.network.ServerPlayerEntity;

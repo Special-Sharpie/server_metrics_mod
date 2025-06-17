@@ -16,10 +16,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.example.ExampleMod"
+			"ca.servermetrics.FabricMain"
 		],
 		"client": [
-			"com.example.ExampleModClient"
+			"ca.servermetrics.FabricMainClient"
 		]
 	},
 	"mixins": [
