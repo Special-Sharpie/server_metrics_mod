@@ -1,4 +1,4 @@
-package com.example;
+package ca.servermetrics;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -8,16 +8,17 @@ import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import main.java.com.example.PlayerPositionLogger;
-import main.java.com.example.LogInterceptor;
+import main.java.ca.servermetrics.PlayerPositionLogger;
+import main.java.ca.servermetrics.LogInterceptor;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 
-public class ExampleMod implements ModInitializer {
+public class FabricMain implements ModInitializer {
 	public static final String MOD_ID = "servermetrics";
 
 	// This logger is used to write text to the console and the log file.
