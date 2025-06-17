@@ -63,11 +63,13 @@ public class ExampleMod implements ModInitializer {
 				.POST(HttpRequest.BodyPublishers.ofString(json))
 				.build();
 
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+		client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+				.thenAccept(response -> {
+				})
+				.exceptionally(ex -> {
+					ex.printStackTrace();
+					return null;
+				});
 	}
 	public static boolean getServerStatus(){
 		HttpClient client = HttpClient.newHttpClient();
@@ -75,6 +77,7 @@ public class ExampleMod implements ModInitializer {
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create("http://192.168.0.189:8000/online"))
 				.GET()
+				.timeout(Duration.ofSeconds(10))
 				.build();
 
         try {

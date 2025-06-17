@@ -62,10 +62,12 @@ public class PlayerPositionLogger {
 				.POST(HttpRequest.BodyPublishers.ofString(json))
 				.build();
 
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+		client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+				.thenAccept(response -> {
+				})
+				.exceptionally(ex -> {
+					ex.printStackTrace();
+					return null;
+				});
 	}
 }
