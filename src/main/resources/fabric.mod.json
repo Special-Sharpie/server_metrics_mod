@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "servermetrics",
+	"version": "${version}",
+	"name": "Example mod",
+	"description": "This mod is designed to connect to an external SQL database for more in-depth metrics and monitoring",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/servermetrics/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.example.ExampleMod"
+		],
+		"client": [
+			"com.example.ExampleModClient"
+		]
+	},
+	"mixins": [
+		"servermetrics.mixins.json",
+		{
+			"config": "servermetrics.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.16.10",
+		"minecraft": "~1.21.5",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
