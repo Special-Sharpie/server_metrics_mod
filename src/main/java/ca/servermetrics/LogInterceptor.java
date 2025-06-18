@@ -19,10 +19,10 @@ import main.java.ca.servermetrics.ApiRequest;
 import main.java.ca.servermetrics.ServiceStatus;
 
 public class LogInterceptor {
-
-    public static void init() {
-        ServiceStatus status = new ServiceStatus();
-		ApiRequest req = new ApiRequest(status, "logs");
+    private static ServiceStatus status;
+    public static void init(ServiceStatus status) {
+        LogInterceptor.status = status;
+		ApiRequest req = new ApiRequest(LogInterceptor.status, "logs");
         LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         LoggerConfig loggerConfig = ctx.getConfiguration().getRootLogger();
         Appender customAppender = new AbstractAppender("CustomAPIAppender", null, null, false, null) {

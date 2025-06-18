@@ -23,14 +23,15 @@ import main.java.ca.servermetrics.ServiceStatus;
 
 public class PlayerPositionLogger {
     private static final Map<UUID, Vec3d> lastPositions = new HashMap<>();
+    private static ServiceStatus status;
     public static final String MOD_ID = "servermetrics";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
    
     private static int tickCount = 0;
 
-    public static void register() {
-        ServiceStatus status = new ServiceStatus();
-		ApiRequest req = new ApiRequest(status, "position");
+    public static void register(ServiceStatus status) {
+        PlayerPositionLogger.status = status;
+		ApiRequest req = new ApiRequest(PlayerPositionLogger.status, "position");
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             tickCount++;
             if (tickCount % 20 == 0) { // ~every 1 second (20 ticks)

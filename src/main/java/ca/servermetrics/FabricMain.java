@@ -34,7 +34,7 @@ public class FabricMain implements ModInitializer {
 		ApiRequest req = new ApiRequest(status, "event");
 		LOGGER.info("Server Metrics initializing...");
 			if (getServerStatus()){
-			LogInterceptor.init();
+			LogInterceptor.init(status);
 			// Player joins
 			ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 				ServerPlayerEntity player = handler.getPlayer();
@@ -43,7 +43,7 @@ public class FabricMain implements ModInitializer {
 				req.POST(buildBody(player.getName().getString(), true, (int)(System.currentTimeMillis() / 1000L)));
 			});
 
-			PlayerPositionLogger.register();
+			PlayerPositionLogger.register(status);
 			// Player leaves
 			ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 				ServerPlayerEntity player = handler.getPlayer();
