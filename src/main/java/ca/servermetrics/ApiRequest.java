@@ -7,30 +7,37 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
+import main.java.ca.servermetrics.ServiceStatus;
+
 public class ApiRequest {
-    private String method;
+    private ServiceStatus status;
     private String endpoint;
-    private String body;
-    public ApiRequest(String method, String endpoint, String body){
-        this.method = method;
+
+    public ApiRequest(ServiceStatus status, String endpoint){
+        this.status = status;
         this.endpoint = endpoint;
-        this.body = body;
     }
 
-    public POST(){
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create("http://192.168.0.189:8000/" + this.endpoint))
-        .header("Content-Type", "application/json")
-        .POST(HttpRequest.BodyPublishers.ofString(this.body))
-        .build();
+    public void POST(String body){
+        if (!status.offline){
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://192.168.0.189:8000/" + this.endpoint))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(body))
+                .build();
 
-    client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-        .thenAccept(response -> {
-        })
-        .exceptionally(ex -> {
-            ex.printStackTrace();
-            return null;
-        });
+            client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenAccept(response -> {
+                })
+                .exceptionally(ex -> {
+                    if (!status.offline) {
+                        status.offline = true;
+                        new Thread(new ServiceWatcher(status)).start();
+                    }
+                    // ex.printStackTrace();
+                    return null;
+            });
+        }
     }
 }

@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import main.java.ca.servermetrics.PlayerPositionLogger;
 import main.java.ca.servermetrics.LogInterceptor;
+import main.java.ca.servermetrics.ApiRequest;
+import main.java.ca.servermetrics.ServiceStatus;
 
 import java.io.IOException;
 import java.net.URI;
@@ -28,6 +30,8 @@ public class FabricMain implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		ServiceStatus status = new ServiceStatus();
+		ApiRequest req = new ApiRequest(status, "event");
 		LOGGER.info("Server Metrics initializing...");
 			if (getServerStatus()){
 			LogInterceptor.init();
@@ -36,15 +40,14 @@ public class FabricMain implements ModInitializer {
 				ServerPlayerEntity player = handler.getPlayer();
 				LOGGER.warn("This is a test warning");
 				LOGGER.error("This is a test error");
-				postConnectionEvent(player.getName().getString(), true, (int)(System.currentTimeMillis() / 1000L));
+				req.POST(buildBody(player.getName().getString(), true, (int)(System.currentTimeMillis() / 1000L)));
 			});
 
 			PlayerPositionLogger.register();
 			// Player leaves
 			ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 				ServerPlayerEntity player = handler.getPlayer();
-				System.out.println("[LEAVE] " + player.getName().getString());
-				postConnectionEvent(player.getName().getString(), false, (int)(System.currentTimeMillis() / 1000L));
+				req.POST(buildBody(player.getName().getString(), false, (int)(System.currentTimeMillis() / 1000L)));
 
 			});
 		}else{
@@ -53,24 +56,8 @@ public class FabricMain implements ModInitializer {
 
 	}
 
-	public static void postConnectionEvent(String name, Boolean event, Integer timestamp){
-		HttpClient client = HttpClient.newHttpClient();
-
-		String json = "{\"username\":\""+name+"\",\"event\":"+event+",\"timestamp\":"+timestamp+"}";
-
-		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create("http://192.168.0.189:8000/event"))
-				.header("Content-Type", "application/json")
-				.POST(HttpRequest.BodyPublishers.ofString(json))
-				.build();
-
-		client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-				.thenAccept(response -> {
-				})
-				.exceptionally(ex -> {
-					ex.printStackTrace();
-					return null;
-				});
+	public static String buildBody(String name, Boolean event, Integer timestamp){
+		return "{\"username\":\""+name+"\",\"event\":"+event+",\"timestamp\":"+timestamp+"}";
 	}
 	public static boolean getServerStatus(){
 		HttpClient client = HttpClient.newHttpClient();
