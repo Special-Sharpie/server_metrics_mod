@@ -27,7 +27,8 @@ public class ServiceWatcher implements Runnable {
     @Override
     public void run(){
         while (offline){
-            LOGGER.warn("Server Metrics service unreachable | Sleeping service for 10 minutes!");
+            // Leaving short for testing, might make longer in the future
+            LOGGER.warn("Server Metrics service unreachable | Sleeping service for 1 minute!");
             try {
                 Thread.sleep(60000);
             } catch (InterruptedException e) {
