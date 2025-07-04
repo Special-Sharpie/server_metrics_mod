@@ -47,7 +47,7 @@ public class ServiceWatcher implements Runnable {
 		HttpClient client = HttpClient.newHttpClient();
 
 		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create("http://192.168.0.189:8000/online"))
+				.uri(URI.create("http://192.168.1.70:8000/online"))
 				.GET()
 				.timeout(Duration.ofSeconds(10))
 				.build();

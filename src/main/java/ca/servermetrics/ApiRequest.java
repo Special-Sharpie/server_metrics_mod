@@ -12,6 +12,7 @@ import main.java.ca.servermetrics.ServiceStatus;
 public class ApiRequest {
     private ServiceStatus status;
     private String endpoint;
+    private String api_url = "192.168.1.70";
 
     public ApiRequest(ServiceStatus status, String endpoint){
         this.status = status;
@@ -22,7 +23,7 @@ public class ApiRequest {
         if (!status.offline){
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://192.168.0.189:8000/" + this.endpoint))
+                .uri(URI.create("http://"+ api_url +":8000/" + this.endpoint))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .build();
