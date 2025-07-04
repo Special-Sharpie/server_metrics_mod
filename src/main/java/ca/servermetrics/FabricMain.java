@@ -13,6 +13,7 @@ import main.java.ca.servermetrics.LogInterceptor;
 import main.java.ca.servermetrics.ApiRequest;
 import main.java.ca.servermetrics.ServiceStatus;
 import main.java.ca.servermetrics.ServiceWatcher;
+import main.java.ca.servermetrics.ResourceUsage;
 
 import java.io.IOException;
 import java.net.URI;
@@ -32,6 +33,7 @@ public class FabricMain implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ServiceStatus status = new ServiceStatus();
+		new Thread(new ResourceUsage(status)).start();
 		ApiRequest req = new ApiRequest(status, "event");
 		LOGGER.info("Server Metrics initializing...");
 		getServerStatus(status);
@@ -39,28 +41,30 @@ public class FabricMain implements ModInitializer {
 		// Player joins
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			ServerPlayerEntity player = handler.getPlayer();
-			LOGGER.warn("This is a test warning");
-			LOGGER.error("This is a test error");
-			req.POST(buildBody(player.getName().getString(), true, (int)(System.currentTimeMillis() / 1000L)));
+			req.POST(buildBody(player.getName().getString(), true, (int)(System.currentTimeMillis() / 1000L), player.getUuid().toString()));
 		});
 
-		PlayerPositionLogger.register(status);
+		// PlayerPositionLogger.register(status);
 		// Player leaves
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 			ServerPlayerEntity player = handler.getPlayer();
-			req.POST(buildBody(player.getName().getString(), false, (int)(System.currentTimeMillis() / 1000L)));
+			req.POST(buildBody(player.getName().getString(), false, (int)(System.currentTimeMillis() / 1000L), null));
 
 		});
 	}
 
-	public static String buildBody(String name, Boolean event, Integer timestamp){
-		return "{\"username\":\""+name+"\",\"event\":"+event+",\"timestamp\":"+timestamp+"}";
+	public static String buildBody(String name, Boolean event, Integer timestamp, String uuid){
+		if (uuid != null){
+			return "{\"username\":\""+name+"\",\"event\":"+event+",\"timestamp\":"+timestamp+ ",\"uuid\":\""+uuid+"\"}";
+		}else{
+			return "{\"username\":\""+name+"\",\"event\":"+event+",\"timestamp\":"+timestamp+"}";
+		}
 	}
 	public static void getServerStatus(ServiceStatus status){
 		HttpClient client = HttpClient.newHttpClient();
 
 		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create("http://192.168.0.189:8000/online"))
+				.uri(URI.create("http://192.168.1.70:8000/online"))
 				.GET()
 				.timeout(Duration.ofSeconds(10))
 				.build();
